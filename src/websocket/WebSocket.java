@@ -24,6 +24,10 @@ public class WebSocket {
 	public static Word2VEC w2 = new Word2VEC(); 
 	public static Word2VEC w3 = new Word2VEC(); 
 	public static Word2VEC w4 = new Word2VEC(); 
+	public static String m1d = "Cbow method: ";
+	public static String m2d = "CWindow method: ";
+	public static String m3d = "Skip gram method: ";
+	public static String m4d = "Structured Skip gram: ";
 	public static boolean word2vecSet = false; //默认没有设置word2vec
 	public static boolean word2vecSetting = false; //正在设置数据库
     //w1.loadJavaModelTxt("library/SkipgramSmall_data");
@@ -71,12 +75,17 @@ public class WebSocket {
 	 * 收到客户端消息后调用的方法
 	 * @param message 客户端发送过来的消息
 	 * @param session 可选的参数
+	 * @throws IOException 
 	 */
+	@SuppressWarnings("static-access")
 	@OnMessage
-	public void onMessage(String message, Session session) {
+	public void onMessage(String message, Session session) throws IOException {
 		System.out.println("来自客户端的消息:" + message);
-		
 		JSONObject json1 = JSONObject.fromObject(message);
+		if (json1.getInt("action") == 1 && this.word2vecSet) {
+			String query = json1.getString("message");
+			this.sendMessage(query);
+		}
 	}
 
 	/**
@@ -97,8 +106,18 @@ public class WebSocket {
 	 */
 	public void sendMessage(String message) throws IOException{
 		JSONObject json1 = new JSONObject();
-		json1.put("action", 2); //2表示发送消息
-		json1.put("message", message);
+		String m1 = w1.distance(message).toString();
+		String m2 = w2.distance(message).toString();
+		String m3 = w3.distance(message).toString();
+		String m4 = w4.distance(message).toString();
+		json1.put("method1", m1); //表示发送消息
+		json1.put("method2", m2); //表示发送消息
+		json1.put("method3", m3); //表示发送消息
+		json1.put("method4", m4); //表示发送消息
+		json1.put("method1d", m1d); //表示发送消息
+		json1.put("method2d", m2d); //表示发送消息
+		json1.put("method3d", m3d); //表示发送消息
+		json1.put("method4d", m4d); //表示发送消息
 		String messages = json1.toString();
 		this.session.getBasicRemote().sendText(messages);
 		//this.session.getAsyncRemote().sendText(message);

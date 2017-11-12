@@ -9,6 +9,10 @@ Welcome<br/>
 <input id="text" type="text"/>
 <button onclick="send()">发送消息</button>
 <p id="message"></p>
+<p id="method1"></p>
+<p id="method2"></p>
+<p id="method3"></p>
+<p id="method4"></p>
 <script type="text/javascript" src="out.js"></script>
 <script type="text/javascript">
 //连接发生错误的回调方法
@@ -24,6 +28,18 @@ websocket.onopen = function () {
 //接收到消息的回调方法
 websocket.onmessage = function (event) {
 	var json1 = JSON.parse(event.data);
+	if (json1.method1 != "") {
+		document.getElementById('method1').innerHTML = json1.method1d + json1.method1 + '<br/>';
+	}
+	if (json1.method2 != "") {
+		document.getElementById('method2').innerHTML = json1.method2d + json1.method2 + '<br/>';
+	}
+	if (json1.method3 != "") {
+		document.getElementById('method3').innerHTML = json1.method3d + json1.method3 + '<br/>';
+	}
+	if (json1.method4 != "") {
+		document.getElementById('method4').innerHTML = json1.method4d + json1.method4 + '<br/>';
+	}
 }
 
 //连接关闭的回调方法
