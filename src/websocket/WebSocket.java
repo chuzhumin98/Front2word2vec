@@ -24,8 +24,8 @@ public class WebSocket {
 	public static Word2VEC w2 = new Word2VEC(); 
 	public static Word2VEC w3 = new Word2VEC(); 
 	public static Word2VEC w4 = new Word2VEC(); 
-	public static String m1d = "CBOW method: ";
-	public static String m2d = "Skip gram method: ";
+	public static String m1d = "CBOW method Run 1: ";
+	public static String m2d = "CBOW method Run 2: ";
 	public static String m3d = "Skip gram method: ";
 	public static String m4d = "Structured Skip gram: ";
 	public static boolean word2vecSet = false; //默认没有设置word2vec
@@ -52,7 +52,7 @@ public class WebSocket {
 		if (!this.word2vecSet && !this.word2vecSetting) {
 			this.word2vecSetting = true;
 			w1.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/Cbow_data");
-			w2.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/Skipgram_data");
+			w2.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/CbowNew_data");
 			//w3.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/SkipgramSmall_data");
 			//w4.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/SkipgramV2Small_data");
 			this.word2vecSet = true;

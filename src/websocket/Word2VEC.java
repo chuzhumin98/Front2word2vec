@@ -178,10 +178,10 @@ public class Word2VEC {
 				}
 
 				len = Math.sqrt(len);
-
-				for (int j = 0; j < size; j++) {
-					value[j] /= len; //归一化
-				}
+				//在计算相似度的问题中，这个时候不应该过早计算相似度
+				//for (int j = 0; j < size; j++) {
+					//value[j] /= len; //归一化
+				//}
 				wordMap.put(key, value);
 			}
 
@@ -256,10 +256,25 @@ public class Word2VEC {
 
 		int resultSize = wordMap.size() < topNSize ? wordMap.size() : topNSize;
 		TreeSet<WordEntry> result = new TreeSet<WordEntry>();
-
+		float sums = 0;
+		for (int i = 0; i < center.length; i++) {
+			sums += center[i] * center[i];
+		}
+		sums = (float) Math.sqrt(sums);
+		for (int i = 0; i < center.length; i++) {
+			center[i] /= sums;
+		}
 		double min = Float.MIN_VALUE;
 		for (Map.Entry<String, float[]> entry : wordMap.entrySet()) {
 			float[] vector = entry.getValue();
+			float sumv = 0;
+			for (int i = 0; i < vector.length; i++) {
+				sumv += vector[i] * vector[i];
+			}
+			sumv = (float) Math.sqrt(sumv);
+			for (int i = 0; i < vector.length; i++) {
+				vector[i] /= sumv;
+			}
 			float dist = 0;
 			for (int i = 0; i < vector.length; i++) {
 				dist += center[i] * vector[i];
@@ -291,15 +306,30 @@ public class Word2VEC {
 
 		int resultSize = wordMap.size() < topNSize ? wordMap.size() : topNSize;
 		TreeSet<WordEntry> result = new TreeSet<WordEntry>();
-
+		float sums = 0;
+		for (int i = 0; i < center.length; i++) {
+			sums += center[i] * center[i];
+		}
+		sums = (float) Math.sqrt(sums);
+		for (int i = 0; i < center.length; i++) {
+			center[i] /= sums;
+		}
 		double min = Float.MIN_VALUE;
 		for (Map.Entry<String, float[]> entry : wordMap.entrySet()) {
 			float[] vector = entry.getValue();
+			float sumv = 0;
+			for (int i = 0; i < vector.length; i++) {
+				sumv += vector[i] * vector[i];
+			}
+			sumv = (float) Math.sqrt(sumv);
+			for (int i = 0; i < vector.length; i++) {
+				vector[i] /= sumv;
+			}
 			float dist = 0;
 			for (int i = 0; i < vector.length; i++) {
 				dist += center[i] * vector[i];
 			}
-
+			
 			if (dist > min) {
 				result.add(new WordEntry(entry.getKey(), dist));
 				if (resultSize < result.size()) {
@@ -342,6 +372,14 @@ public class Word2VEC {
 		double min = Float.MIN_VALUE;
 		for (Map.Entry<String, float[]> entry : wordMap.entrySet()) {
 			float[] vector = entry.getValue();
+			float sumv = 0;
+			for (int i = 0; i < vector.length; i++) {
+				sumv += vector[i] * vector[i];
+			}
+			sumv = (float) Math.sqrt(sumv);
+			for (int i = 0; i < vector.length; i++) {
+				vector[i] /= sumv;
+			}
 			float dist = 0;
 			for (int i = 0; i < vector.length; i++) {
 				dist += center[i] * vector[i];
