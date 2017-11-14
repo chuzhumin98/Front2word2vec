@@ -162,6 +162,9 @@ public class Word2VEC {
 			String key = null;
 			float[] value = null;
 			for (int i = 0; i < words; i++) {
+				if ((i+1)%10000 == 0) {
+					System.out.println("finished "+ (i+1));
+				}
 				double len = 0;
 				input.nextLine(); //空行			
 				key = input.nextLine();
@@ -270,7 +273,7 @@ public class Word2VEC {
 				min = result.last().score;
 			}
 		}
-		result.pollFirst();
+		result.pollFirst(); //去掉它自己
 
 		return result;
 	}
@@ -306,6 +309,53 @@ public class Word2VEC {
 			}
 		}
 		result.pollFirst();
+
+		return result;
+	}
+	
+	//计算q1+q2-q3
+	public Set<WordEntry> calculate(String q1, String q2, String q3) {
+		if (this.wordMap.get(q1) == null || this.wordMap.get(q2) == null || this.wordMap.get(q3) == null) {
+			return null;
+		}
+		int Len = this.wordMap.get(q1).length;
+		float[] center = new float [Len];
+		float[] tmp1 = this.wordMap.get(q1);
+		float[] tmp2 = this.wordMap.get(q2);
+		float[] tmp3 = this.wordMap.get(q3);
+		for (int i = 0; i < Len; i++) {
+			center[i] = tmp1[i] + tmp2[i] - tmp3[i];
+		}
+		double sums = 0;
+		for (int i = 0; i < Len; i++) {
+			sums += center[i] * center[i];
+		}
+		sums = Math.sqrt(sums);
+		for (int i = 0; i < Len; i++) {
+			center[i] /= sums;
+		}
+
+		//int resultSize = wordMap.size() < topNSize ? wordMap.size() : topNSize;
+		int resultSize = 5;
+		TreeSet<WordEntry> result = new TreeSet<WordEntry>();
+
+		double min = Float.MIN_VALUE;
+		for (Map.Entry<String, float[]> entry : wordMap.entrySet()) {
+			float[] vector = entry.getValue();
+			float dist = 0;
+			for (int i = 0; i < vector.length; i++) {
+				dist += center[i] * vector[i];
+			}
+
+			if (dist > min) {
+				result.add(new WordEntry(entry.getKey(), dist));
+				if (resultSize < result.size()) {
+					result.pollLast();
+				}
+				min = result.last().score;
+			}
+		}
+		//result.pollFirst();
 
 		return result;
 	}

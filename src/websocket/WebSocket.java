@@ -24,8 +24,8 @@ public class WebSocket {
 	public static Word2VEC w2 = new Word2VEC(); 
 	public static Word2VEC w3 = new Word2VEC(); 
 	public static Word2VEC w4 = new Word2VEC(); 
-	public static String m1d = "Cbow method: ";
-	public static String m2d = "CWindow method: ";
+	public static String m1d = "CBOW method: ";
+	public static String m2d = "Skip gram method: ";
 	public static String m3d = "Skip gram method: ";
 	public static String m4d = "Structured Skip gram: ";
 	public static boolean word2vecSet = false; //默认没有设置word2vec
@@ -51,10 +51,10 @@ public class WebSocket {
 		System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
 		if (!this.word2vecSet && !this.word2vecSetting) {
 			this.word2vecSetting = true;
-			w1.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/CbowSmall_data");
-			w2.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/CWindowSmall_data");
-			w3.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/SkipgramSmall_data");
-			w4.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/SkipgramV2Small_data");
+			w1.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/Cbow_data");
+			w2.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/Skipgram_data");
+			//w3.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/SkipgramSmall_data");
+			//w4.loadJavaModelTxt("D:/学习/大三上/信息检索/Word2VEC_java/library/SkipgramV2Small_data");
 			this.word2vecSet = true;
 			this.word2vecSetting = false;
 			System.out.println("the server is ready!");
@@ -86,6 +86,12 @@ public class WebSocket {
 			String query = json1.getString("message");
 			this.sendMessage(query);
 		}
+		if (json1.getInt("action") == 2 && this.word2vecSet) {
+			String q1 = json1.getString("query1");
+			String q2 = json1.getString("query2");
+			String q3 = json1.getString("query3");
+			this.sendMessage2(q1, q2, q3);
+		}
 	}
 
 	/**
@@ -108,21 +114,40 @@ public class WebSocket {
 		JSONObject json1 = new JSONObject();
 		String m1 = w1.distance(message).toString();
 		String m2 = w2.distance(message).toString();
-		String m3 = w3.distance(message).toString();
-		String m4 = w4.distance(message).toString();
+		//String m3 = w3.distance(message).toString();
+		//String m4 = w4.distance(message).toString();
 		json1.put("method1", m1); //表示发送消息
 		json1.put("method2", m2); //表示发送消息
-		json1.put("method3", m3); //表示发送消息
-		json1.put("method4", m4); //表示发送消息
+		json1.put("method3", ""); //表示发送消息
+		json1.put("method4", ""); //表示发送消息
 		json1.put("method1d", m1d); //表示发送消息
 		json1.put("method2d", m2d); //表示发送消息
-		json1.put("method3d", m3d); //表示发送消息
-		json1.put("method4d", m4d); //表示发送消息
+		json1.put("method3d", ""); //表示发送消息
+		json1.put("method4d", ""); //表示发送消息
 		String messages = json1.toString();
 		this.session.getBasicRemote().sendText(messages);
 		//this.session.getAsyncRemote().sendText(message);
 	}
 
+	public void sendMessage2(String q1, String q2, String q3) throws IOException{
+		JSONObject json1 = new JSONObject();
+		String m1 = w1.calculate(q1, q2, q3).toString();
+		String m2 = w2.calculate(q1, q2, q3).toString();
+		//String m3 = w3.distance(message).toString();
+		//String m4 = w4.distance(message).toString();
+		json1.put("method1", m1); //表示发送消息
+		json1.put("method2", m2); //表示发送消息
+		json1.put("method3", ""); //表示发送消息
+		json1.put("method4", ""); //表示发送消息
+		json1.put("method1d", m1d); //表示发送消息
+		json1.put("method2d", m2d); //表示发送消息
+		json1.put("method3d", ""); //表示发送消息
+		json1.put("method4d", ""); //表示发送消息
+		String messages = json1.toString();
+		this.session.getBasicRemote().sendText(messages);
+		//this.session.getAsyncRemote().sendText(message);
+	}
+	
 	public static synchronized int getOnlineCount() {
 		return onlineCount;
 	}
